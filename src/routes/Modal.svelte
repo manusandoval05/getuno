@@ -4,7 +4,7 @@
     import Input from "./Input.svelte";
 
     export let active: boolean;
-    export let players: string[] = []
+    export let players: string[] = [];
 
     const dispatch = createEventDispatcher();
 

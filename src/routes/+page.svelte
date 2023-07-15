@@ -1,13 +1,15 @@
 <script lang="ts">
     import 'bulma/css/bulma.min.css';
+    import 'bootstrap-icons/font/bootstrap-icons.min.css';
 	import Modal from "./Modal.svelte";
 
     let activeModal : boolean = false;
 
-    let players = [];
+    let players: string[] = [];
 </script>
 
 <Modal 
+    bind:players={players}
     active={activeModal}
     on:close={() => activeModal = false}/>
 
