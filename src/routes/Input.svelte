@@ -17,7 +17,7 @@
 
 <div class="field has-addons">
     <p class="control has-icons-left">
-        <input bind:value={inputValue} class="input" type="text" placeholder="Player">
+        <input bind:value={inputValue} class="input" type="text" placeholder={`Player ${indexPosition + 1}`}>
         <span class="icon is-medium is-left">
             <i class="bi bi-person-fill"></i>
         </span>

@@ -1,17 +1,29 @@
 <script lang="ts">
-    import 'bulma/css/bulma.min.css';
-    import 'bootstrap-icons/font/bootstrap-icons.min.css';
 	import Modal from "./Modal.svelte";
+	import { goto } from "$app/navigation";
+    import playerStore from "$lib/stores/players";
 
     let activeModal : boolean = false;
 
     let players: string[] = [];
+
+    function startGame(){
+        const playerObject = {
+            players: players
+        };
+
+        $playerStore = playerObject;
+
+        goto("/game/party");
+    }
 </script>
 
 <Modal 
+    on:startGame={startGame}
     bind:players={players}
     active={activeModal}
-    on:close={() => activeModal = false}/>
+    on:close={() => activeModal = false}
+/>
 
 <section class="hero is-fullheight is-danger" id="main-screen">
     <div class="hero-body is-flex is-flex-direction-column">

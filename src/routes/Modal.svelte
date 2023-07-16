@@ -12,10 +12,13 @@
         dispatch('close'); 
     }
     function createPlayer(){
-        players = [...players, `Player ${players.length + 1}`];
+        players = [...players, ""];
     }
-    function deletePlayer(event: any){
+    function deletePlayer(event:any){
         players = players.splice(event.detail.index);
+    }
+    function startGameDispatch(){
+        dispatch('startGame');
     }
 </script>
 
@@ -50,12 +53,20 @@
                 {/each}
             </div>
             <div class="container mt-3">
-                <button class="button is-link start-game" type="submit">Start Game</button>
+                <button 
+                    class="button is-link"
+                    on:click={startGameDispatch}
+                    type="submit"
+                >
+                    Start Game
+                </button>
             </div>
         </div>
     </div>
     <button 
         class="modal-close is-large" 
         aria-label="close"
-        on:click={closeModal}></button>
+        on:click={closeModal}
+    >
+    </button>
 </div>
