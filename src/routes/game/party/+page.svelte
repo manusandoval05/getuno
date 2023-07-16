@@ -10,7 +10,8 @@
     // Create a list with the same length as the question categories selected by default
     let selectedCategories = questionCategories.map( category => true);
 
-    let currentPlayer: string;
+    let currentPlayer: PlayerScoreboard;
+    let currentPlayerIndex: number;
     let playerList: string[];
 
     interface PlayerScoreboard {
@@ -26,7 +27,7 @@
         playerList = playerObject["players"];
 
         
-        currentPlayer = playerList[Math.floor(Math.random() * playerList.length)]
+        
 
         playerList.forEach( (value: string, index: number) => {
             playerScoreboard.push({
@@ -35,7 +36,12 @@
                 score: 0
             });
         });
+
+        currentPlayerIndex = Math.floor(Math.random() * playerScoreboard.length);
+        currentPlayer = playerScoreboard[currentPlayerIndex];
+
         playerScoreboard = playerScoreboard;
+
     });
 
     let questionBank = questionCategories.map( (value, index) => {
@@ -50,9 +56,23 @@
             }
         });
     }
+    function answerQuestion(){
+        currentPlayer.score++;
+        playerScoreboard.sort((a, b) => b.score - a.score)
+        playerScoreboard = playerScoreboard.map( (value, index) => {
+            return {
+                position: index + 1,
+                playerName: value.playerName,
+                score: value.score,
+            }
+        })
+        selectRandomPlayer();
+        selectRandomQuestion();
+    }
 
     function selectRandomPlayer(){
-        currentPlayer = playerList[Math.floor(Math.random() * playerList.length)]
+        currentPlayerIndex = Math.floor(Math.random() * playerScoreboard.length);
+        currentPlayer = playerScoreboard[currentPlayerIndex];
     }
     function selectRandomQuestion(){
         randomCategory = questionBank[Math.floor(Math.random() * questionBank.length)];
@@ -60,7 +80,9 @@
                             randomCategory.questions[Math.floor(Math.random() * randomCategory.questions.length)] 
                             : "Select at least one question category";
     }
+    function refreshScoreboard(){
 
+    }
 
     let randomCategory = questionBank[Math.floor(Math.random() * questionBank.length)];
 
@@ -119,7 +141,10 @@
                         </p>
                     </div>
                     <footer class="card-footer">
-                        <button class="card-footer-item button is-success is-medium is-outlined" id="accept-button">
+                        <button
+                            on:click={answerQuestion} 
+                            class="card-footer-item button is-success is-medium is-outlined" 
+                        >
                             <span class="icon">
                                 <i class="bi bi-check2-circle"></i>
                             </span>
@@ -139,7 +164,9 @@
                     </header>
                     <div class="card-content">
                         <p class="is-size-3" id="current-player-card">
-                            {currentPlayer}
+                            {#if currentPlayer}
+                                {currentPlayer.playerName}
+                            {/if}
                         </p>
                     </div>
                 </div>
