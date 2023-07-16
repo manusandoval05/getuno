@@ -10,6 +10,9 @@
     // Create a list with the same length as the question categories selected by default
     let selectedCategories = questionCategories.map( category => true);
 
+    let currentPlayer: string;
+    let playerList: string[];
+
     interface PlayerScoreboard {
         position: number,
         playerName: string,
@@ -20,9 +23,11 @@
         
         let playerObject = JSON.parse(window.localStorage.getItem("players") || "");
 
-        let playerList = playerObject["players"];
+        playerList = playerObject["players"];
 
-    
+        
+        currentPlayer = playerList[Math.floor(Math.random() * playerList.length)]
+
         playerList.forEach( (value: string, index: number) => {
             playerScoreboard.push({
                 position: index + 1,
@@ -32,6 +37,37 @@
         });
         playerScoreboard = playerScoreboard;
     });
+
+    let questionBank = questionCategories.map( (value, index) => {
+        if(selectedCategories[index]){
+            return value;
+        }
+    });
+    function createQuestionBank(){
+        questionBank = questionCategories.map( (value, index) => {
+            if(selectedCategories[index]){
+                return value;
+            }
+        });
+    }
+
+    function selectRandomPlayer(){
+        currentPlayer = playerList[Math.floor(Math.random() * playerList.length)]
+    }
+    function selectRandomQuestion(){
+        randomCategory = questionBank[Math.floor(Math.random() * questionBank.length)];
+        randomQuestion = randomCategory ? 
+                            randomCategory.questions[Math.floor(Math.random() * randomCategory.questions.length)] 
+                            : "Select at least one question category";
+    }
+
+
+    let randomCategory = questionBank[Math.floor(Math.random() * questionBank.length)];
+
+    let randomQuestion = randomCategory ? 
+                            randomCategory.questions[Math.floor(Math.random() * randomCategory.questions.length)] 
+                            : "Select a question category";
+
 </script>
 
 <section class="hero is-fullheight is-danger" id="game-screen">
@@ -48,7 +84,12 @@
                             >
                                 <div class="dropdown-trigger">
                                     <button
-                                        on:click={() => activeDropdown = !activeDropdown}  
+                                        on:click={() => {
+                                            activeDropdown = !activeDropdown;
+                                            if(!activeDropdown){
+                                                createQuestionBank();
+                                            }
+                                        }}  
                                         class="button" 
                                         aria-haspopup="true" 
                                         aria-controls="dropdown-menu"
@@ -73,19 +114,21 @@
                         </div>
                     </header>
                     <div class="card-content">
-                        <p class="is-size-3" id="question-card"></p>
+                        <p class="is-size-3" id="question-card">
+                            {randomQuestion}
+                        </p>
                     </div>
                     <footer class="card-footer">
-                        <a class="card-footer-item button is-success is-medium is-outlined" id="accept-button">
+                        <button class="card-footer-item button is-success is-medium is-outlined" id="accept-button">
                             <span class="icon">
                                 <i class="bi bi-check2-circle"></i>
                             </span>
-                        </a>
-                        <a class="card-footer-item button is-danger is-medium is-outlined" id="reject-button" >
+                        </button>
+                        <button class="card-footer-item button is-warning is-medium is-outlined" id="reject-button" >
                             <span class="icon">
                                 <i class="bi bi-x-circle"></i>
                             </span>
-                        </a>          
+                        </button>          
                     </footer>
                 </div>
             </div>
@@ -96,7 +139,7 @@
                     </header>
                     <div class="card-content">
                         <p class="is-size-3" id="current-player-card">
-                            
+                            {currentPlayer}
                         </p>
                     </div>
                 </div>
