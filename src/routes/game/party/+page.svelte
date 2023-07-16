@@ -1,24 +1,37 @@
 <script lang="ts">
-    import playerStore from "$lib/stores/players";
+    import { onMount } from "svelte";
     import { STARTERS, BASIC, EFFECTIVE, GOOD, INTERESTING, WORK, COUPLES, STUDENTS, TRUTH, PHILOSOPHICAL, FUN } from "$lib/game-questions/getuno-questions";
 
     import CategoryCheckbox from "./CategoryCheckbox.svelte";
 
-    let activeDropdown: boolean = false;
+    let activeDropdown: boolean;
     let questionCategories =  [STARTERS, BASIC, EFFECTIVE, GOOD, INTERESTING, WORK, COUPLES, STUDENTS, TRUTH, PHILOSOPHICAL, FUN]
     
     // Create a list with the same length as the question categories selected by default
-    let selectedCategories = questionCategories.map( category => true)
-
-    let playerObjectStore = $playerStore;
-    let playerList = playerObjectStore.players;
+    let selectedCategories = questionCategories.map( category => true);
 
     interface PlayerScoreboard {
         position: number,
-        name: string,
+        playerName: string,
         score: number
     }
+    let playerScoreboard: PlayerScoreboard[] = [];
+    onMount( () => {
+        
+        let playerObject = JSON.parse(window.localStorage.getItem("players") || "");
 
+        let playerList = playerObject["players"];
+
+    
+        playerList.forEach( (value: string, index: number) => {
+            playerScoreboard.push({
+                position: index + 1,
+                playerName: value,
+                score: 0
+            });
+        });
+        playerScoreboard = playerScoreboard;
+    });
 </script>
 
 <section class="hero is-fullheight is-danger" id="game-screen">
@@ -35,7 +48,7 @@
                             >
                                 <div class="dropdown-trigger">
                                     <button
-                                        on:click={() => activeDropdown != activeDropdown} 
+                                        on:click={() => activeDropdown = !activeDropdown}  
                                         class="button" 
                                         aria-haspopup="true" 
                                         aria-controls="dropdown-menu"
@@ -107,6 +120,15 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                {#if playerScoreboard}
+                                    {#each playerScoreboard as player}
+                                        <tr>
+                                            <th>{player.position}</th>
+                                            <td>{player.playerName}</td>
+                                            <td>{player.score}</td>
+                                        </tr>
+                                    {/each}
+                                {/if}
                             </tbody>
                         </table>
                     </div>

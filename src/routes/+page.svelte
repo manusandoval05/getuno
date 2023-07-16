@@ -1,7 +1,6 @@
 <script lang="ts">
 	import Modal from "./Modal.svelte";
 	import { goto } from "$app/navigation";
-    import playerStore from "$lib/stores/players";
 
     let activeModal : boolean = false;
 
@@ -12,7 +11,7 @@
             players: players
         };
 
-        $playerStore = playerObject;
+        window.localStorage.setItem("players", JSON.stringify(playerObject));
 
         goto("/game/party");
     }
