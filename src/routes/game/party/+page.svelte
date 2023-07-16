@@ -95,6 +95,20 @@
 <section class="hero is-fullheight is-danger" id="game-screen">
     <div class="columns">
         <div class="column is-8">
+            <div class="container px-3 py-6">
+                <div class="card">
+                    <header class="card-header">
+                        <p class="card-header-title">Current player</p>
+                    </header>
+                    <div class="card-content">
+                        <p class="is-size-3" id="current-player-card">
+                            {#if currentPlayer}
+                                {currentPlayer.playerName}
+                            {/if}
+                        </p>
+                    </div>
+                </div>
+            </div>
             <div class="container px-3">
                 <div class="card mt-3">
                     <header class="card-header">
@@ -155,20 +169,6 @@
                             </span>
                         </button>          
                     </footer>
-                </div>
-            </div>
-            <div class="container px-3 py-6">
-                <div class="card">
-                    <header class="card-header">
-                        <p class="card-header-title">Current player</p>
-                    </header>
-                    <div class="card-content">
-                        <p class="is-size-3" id="current-player-card">
-                            {#if currentPlayer}
-                                {currentPlayer.playerName}
-                            {/if}
-                        </p>
-                    </div>
                 </div>
             </div>
         </div>
