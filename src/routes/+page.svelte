@@ -13,7 +13,7 @@
 
         window.localStorage.setItem("players", JSON.stringify(playerObject));
 
-        goto("/game/party");
+        goto("getuno/game/party");
     }
 </script>
 
