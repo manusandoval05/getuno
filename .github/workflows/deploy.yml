@@ -35,8 +35,7 @@ jobs:
         with:
           # note to self; cause no soul is gonna touch this code: the path should match the 'pages' option in the svelte adapter options. In this case adapter-static
           path: 'build/'
-
-deploy:
+  deploy:
   needs: build_site
   runs-on: ubuntu-latest
 
@@ -52,3 +51,4 @@ deploy:
     - name: Deploy
       id: deployment
       uses: actions/deploy-pages@v1
+
