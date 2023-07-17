@@ -1,0 +1,17 @@
+{
+    "short_name": "Getuno",
+    "name": "Getuno",
+    "start_url": "getuno/",
+    "icons": [
+        {
+            "src": "logo_512.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ],
+    "background_color": "#b6fdfc",
+    "display": "standalone",
+    "scope": "getuno/",
+    "theme_color": "#fe0078",
+    "description": "Activities to Getuno people better"
+}
