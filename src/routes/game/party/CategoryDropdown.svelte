@@ -1,13 +1,23 @@
 <script lang="ts">
+    import { createEventDispatcher } from "svelte";
+
     import CategoryCheckbox from "./CategoryCheckbox.svelte";
+
+    const dispatch = createEventDispatcher();
 
     let activeDropdown: boolean = false;
 
     export let dropdownName: string = "Categories"
-
     export let dropdownContent: string[];
     export let checkboxedCategories: boolean[] = dropdownContent.map( category => true);
 
+    function toggleDropdown(){
+        activeDropdown = !activeDropdown
+
+        if(!activeDropdown){
+            dispatch("close")
+        }
+    }
 </script>
 
 <div 
@@ -16,7 +26,7 @@
 >
     <div class="dropdown-trigger">
         <button
-            on:click={() => activeDropdown = !activeDropdown}
+            on:click={toggleDropdown}
             class="button" 
             aria-haspopup="true" 
             aria-controls="dropdown-menu"

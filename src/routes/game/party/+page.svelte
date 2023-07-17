@@ -151,11 +151,13 @@
                         <p class="card-header-title">Getuno - Random get-to-know question</p>
                         <div class="control" id="category-dropdown-container">
                             <CategoryDropdown
+                                on:close={createChallengeBank}
                                 dropdownName={"Challenges"}
                                 dropdownContent={challengeCategoriesName}
                                 bind:checkboxedCategories={checkboxedChallengeCategories}
                             />
                             <CategoryDropdown 
+                                on:close={createQuestionBank}
                                 dropdownName={"Questions"}
                                 dropdownContent={questionCategoriesName}
                                 bind:checkboxedCategories={checkboxedQuestionCategories}
