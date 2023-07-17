@@ -45,6 +45,7 @@
         score: number
     }
     let playerScoreboard: PlayerScoreboard[] = [];
+
     onMount( () => {
         
         randomQuestion = selectRandomQuestion();
@@ -77,14 +78,6 @@
 
     function answerQuestion(){
         currentPlayer.score++;
-        playerScoreboard.sort((a, b) => b.score - a.score);
-        playerScoreboard = playerScoreboard.map( (value, index) => {
-            return {
-                position: index + 1,
-                playerName: value.playerName,
-                score: value.score,
-            }
-        });
         randomChallenge = selectRandomChallenge();
         activeChallengeCard = true;
     }
