@@ -1,18 +1,43 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { STARTERS, BASIC, EFFECTIVE, GOOD, INTERESTING, WORK, COUPLES, STUDENTS, TRUTH, PHILOSOPHICAL, FUN } from "$lib/game-questions/getuno-questions";
+    import {STARTERS, BASIC, EFFECTIVE, GOOD, INTERESTING, WORK, COUPLES, STUDENTS, TRUTH, PHILOSOPHICAL, FUN } from "$lib/game-content/getuno-questions";
+    import { CHEST_WORKOUT, BACK_WORKOUT, LEG_WORKOUT, SHOULDERS_WORKOUT, ARMS_WORKOUT } from '$lib/game-content/getuno-challenges';
 
-    import CategoryCheckbox from "./CategoryCheckbox.svelte";
+    import type { CategoryQuestionBank } from "$lib/game-content/getuno-questions";
+    import type { CategoryChallengeBank } from "$lib/game-content/getuno-challenges";
 
-    let activeDropdown: boolean;
-    let questionCategories =  [STARTERS, BASIC, EFFECTIVE, GOOD, INTERESTING, WORK, COUPLES, STUDENTS, TRUTH, PHILOSOPHICAL, FUN]
+    import CategoryDropdown from "./CategoryDropdown.svelte";
     
+    // Question mechanic setup
+    let questionCategories: CategoryQuestionBank[] =  [STARTERS, BASIC, EFFECTIVE, GOOD, INTERESTING, WORK, COUPLES, STUDENTS, TRUTH, PHILOSOPHICAL, FUN]
+    let questionCategoriesName: string[] = questionCategories.map( category => category.categoryName); 
+    
+    let checkboxedQuestionCategories: boolean[] = questionCategories.map( category => true);
+    let selectedQuestionBank: CategoryQuestionBank[] = questionCategories.filter( (value, index) => checkboxedQuestionCategories[index] )
+
+    // Challenges mechanic setup
+    let challengeCategories: CategoryChallengeBank[] = [CHEST_WORKOUT, BACK_WORKOUT, LEG_WORKOUT, SHOULDERS_WORKOUT, ARMS_WORKOUT]
+    let challengeCategoriesName: string[] = challengeCategories.map( category => category.categoryName);
+    
+    let checkboxedChallengeCategories: boolean[] = challengeCategories.map( category => true);
+    let selectedChallengeBank: CategoryChallengeBank[] = challengeCategories.filter( (value, index) => checkboxedChallengeCategories[index]);
+
     // Create a list with the same length as the question categories selected by default
-    let selectedCategories = questionCategories.map( category => true);
 
     let currentPlayer: PlayerScoreboard;
     let currentPlayerIndex: number;
     let playerList: string[];
+
+    // Displayable 
+
+    let randomQuestion: string;
+    let randomChallenge: string;
+
+    // componentsStates
+
+    let activeChallengeCard: boolean = false;
+
+
 
     interface PlayerScoreboard {
         position: number,
@@ -22,13 +47,11 @@
     let playerScoreboard: PlayerScoreboard[] = [];
     onMount( () => {
         
+        randomQuestion = selectRandomQuestion();
+
+        // Configure initial player Scoreboard
         let playerObject = JSON.parse(window.localStorage.getItem("players") || "");
-
         playerList = playerObject["players"];
-
-        
-        
-
         playerList.forEach( (value: string, index: number) => {
             playerScoreboard.push({
                 position: index + 1,
@@ -44,30 +67,51 @@
 
     });
 
-    let questionBank = questionCategories.map( (value, index) => {
-        if(selectedCategories[index]){
-            return value;
-        }
-    });
     function createQuestionBank(){
-        questionBank = questionCategories.map( (value, index) => {
-            if(selectedCategories[index]){
-                return value;
-            }
-        });
+        selectedQuestionBank = questionCategories.filter( (value, index) => checkboxedQuestionCategories[index]);
     }
+
+    function createChallengeBank(){
+        selectedChallengeBank = challengeCategories.filter( (value, index) => checkboxedChallengeCategories[index]);
+    }
+
     function answerQuestion(){
         currentPlayer.score++;
-        playerScoreboard.sort((a, b) => b.score - a.score)
+        playerScoreboard.sort((a, b) => b.score - a.score);
         playerScoreboard = playerScoreboard.map( (value, index) => {
             return {
                 position: index + 1,
                 playerName: value.playerName,
                 score: value.score,
             }
-        })
+        });
+        randomChallenge = selectRandomChallenge();
+        activeChallengeCard = true;
+    }
+    function rejectQuestion(){
+        randomChallenge = selectRandomChallenge();
+        activeChallengeCard = true;   
+    }
+    function completeChallenge(){
+        currentPlayer.score++;
+        console.log(currentPlayer);
+        console.log(playerScoreboard);
+        playerScoreboard.sort((a, b) => b.score - a.score);
+        playerScoreboard = playerScoreboard.map( (value, index) => {
+            return {
+                position: index + 1,
+                playerName: value.playerName,
+                score: value.score,
+            }
+        });
         selectRandomPlayer();
-        selectRandomQuestion();
+        randomQuestion = selectRandomQuestion();
+        activeChallengeCard = false;
+    }
+    function rejectChallenge(){
+        selectRandomPlayer();
+        randomQuestion = selectRandomQuestion();
+        activeChallengeCard = false;
     }
 
     function selectRandomPlayer(){
@@ -75,21 +119,20 @@
         currentPlayer = playerScoreboard[currentPlayerIndex];
     }
     function selectRandomQuestion(){
-        randomCategory = questionBank[Math.floor(Math.random() * questionBank.length)];
-        randomQuestion = randomCategory ? 
-                            randomCategory.questions[Math.floor(Math.random() * randomCategory.questions.length)] 
-                            : "Select at least one question category";
+        const randomCategory = selectedQuestionBank[Math.floor(Math.random() * selectedQuestionBank.length)];
+        const randomQuestion = randomCategory.questions[Math.floor(Math.random() * randomCategory.questions.length)];
+
+        return randomQuestion;
+    }
+    function selectRandomChallenge(){
+        const randomCategory = selectedChallengeBank[Math.floor(Math.random() * selectedChallengeBank.length)];
+        const randomChallenge = randomCategory.challenges[Math.floor(Math.random() * randomCategory.challenges.length)]
+
+        return randomChallenge;
     }
     function refreshScoreboard(){
 
     }
-
-    let randomCategory = questionBank[Math.floor(Math.random() * questionBank.length)];
-
-    let randomQuestion = randomCategory ? 
-                            randomCategory.questions[Math.floor(Math.random() * randomCategory.questions.length)] 
-                            : "Select a question category";
-
 </script>
 
 <section class="hero is-fullheight is-danger" id="game-screen">
@@ -114,43 +157,20 @@
                     <header class="card-header">
                         <p class="card-header-title">Getuno - Random get-to-know question</p>
                         <div class="control" id="category-dropdown-container">
-                            <div 
-                                class="dropdown mx-3 my-3"
-                                class:is-active={activeDropdown}
-                            >
-                                <div class="dropdown-trigger">
-                                    <button
-                                        on:click={() => {
-                                            activeDropdown = !activeDropdown;
-                                            if(!activeDropdown){
-                                                createQuestionBank();
-                                            }
-                                        }}  
-                                        class="button" 
-                                        aria-haspopup="true" 
-                                        aria-controls="dropdown-menu"
-                                    >
-                                        <span>Categories</span>
-                                        <span class="icon is-small">
-                                            <i class="bi bi-chevron-down" aria-hidden="true"></i>
-                                        </span>
-                                    </button>
-                                </div>
-                                <div class="dropdown-menu" role="menu">
-                                    <div class="dropdown-content px-2">
-                                        {#each questionCategories as category, i}
-                                            <CategoryCheckbox
-                                                categoryName={category.categoryName}
-                                                bind:checkboxed={selectedCategories[i]}
-                                            />
-                                        {/each}
-                                    </div>
-                                </div>
-                            </div>
+                            <CategoryDropdown
+                                dropdownName={"Challenges"}
+                                dropdownContent={challengeCategoriesName}
+                                bind:checkboxedCategories={checkboxedChallengeCategories}
+                            />
+                            <CategoryDropdown 
+                                dropdownName={"Questions"}
+                                dropdownContent={questionCategoriesName}
+                                bind:checkboxedCategories={checkboxedQuestionCategories}
+                            />
                         </div>
                     </header>
                     <div class="card-content">
-                        <p class="is-size-3" id="question-card">
+                        <p class="is-size-3">
                             {randomQuestion}
                         </p>
                     </div>
@@ -163,7 +183,42 @@
                                 <i class="bi bi-check2-circle"></i>
                             </span>
                         </button>
-                        <button class="card-footer-item button is-warning is-medium is-outlined" id="reject-button" >
+                        <button
+                            on:click={rejectQuestion} 
+                            class="card-footer-item button is-danger is-medium is-outlined">
+                            <span class="icon">
+                                <i class="bi bi-x-circle"></i>
+                            </span>
+                        </button>          
+                    </footer>
+                </div>
+            </div>
+            <div class="container px-3">
+                <div 
+                    class:is-hidden={!activeChallengeCard}
+                    class="card mt-3"
+                >
+                    <header class="card-header">
+                        <p class="card-header-title">Challenges</p>
+                    </header>
+                    <div class="card-content">
+                        <p class="is-size-3">
+                            {randomChallenge}
+                        </p>
+                    </div>
+                    <footer class="card-footer">
+                        <button
+                            on:click={completeChallenge}
+                            class="card-footer-item button is-success is-medium is-outlined" 
+                        >
+                            <span class="icon">
+                                <i class="bi bi-check2-circle"></i>
+                            </span>
+                        </button>
+                        <button 
+                            on:click={rejectChallenge}
+                            class="card-footer-item button is-danger is-medium is-outlined"
+                        >
                             <span class="icon">
                                 <i class="bi bi-x-circle"></i>
                             </span>

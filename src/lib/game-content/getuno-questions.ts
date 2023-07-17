@@ -1,3 +1,8 @@
+export interface CategoryQuestionBank{
+    categoryName: string;
+    questions: string[];
+}
+
 export const STARTERS = {
     categoryName: "Starters",
     questions: [
