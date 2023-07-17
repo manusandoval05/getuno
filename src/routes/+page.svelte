@@ -2,7 +2,7 @@
 	import Modal from "./Modal.svelte";
 	import { goto } from "$app/navigation";
 
-    let activeModal : boolean = false;
+    let activeModal: boolean = false;
 
     let players: string[] = [];
 
