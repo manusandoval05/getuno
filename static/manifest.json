@@ -1,7 +1,7 @@
 {
     "short_name": "Getuno",
     "name": "Getuno",
-    "start_url": "getuno/",
+    "start_url": "/getuno/",
     "icons": [
         {
             "src": "logo_512.png",
@@ -11,7 +11,7 @@
     ],
     "background_color": "#b6fdfc",
     "display": "standalone",
-    "scope": "getuno/",
+    "scope": "/getuno/",
     "theme_color": "#fe0078",
     "description": "Activities to Getuno people better"
 }
