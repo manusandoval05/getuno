@@ -32,12 +32,14 @@
 
     let randomQuestion: string;
     let randomChallenge: string;
+    let randomReps: string;
+
+    const repsMin: number = 5;
+    const repsMax: number = 20;
 
     // componentsStates
 
     let activeChallengeCard: boolean = false;
-
-
 
     interface PlayerScoreboard {
         position: number,
@@ -79,10 +81,12 @@
     function answerQuestion(){
         currentPlayer.score++;
         randomChallenge = selectRandomChallenge();
+        randomReps = (Math.floor(Math.random() * (repsMax - repsMin) + repsMin)).toString();
         activeChallengeCard = true;
     }
     function rejectQuestion(){
         randomChallenge = selectRandomChallenge();
+        randomReps = (Math.floor(Math.random() * (repsMax - repsMin) + repsMin)).toString();
         activeChallengeCard = true;   
     }
     function completeChallenge(){
@@ -119,7 +123,7 @@
     }
     function selectRandomChallenge(){
         const randomCategory = selectedChallengeBank[Math.floor(Math.random() * selectedChallengeBank.length)];
-        const randomChallenge = randomCategory.challenges[Math.floor(Math.random() * randomCategory.challenges.length)]
+        const randomChallenge = randomCategory.challenges[Math.floor(Math.random() * randomCategory.challenges.length)];
 
         return randomChallenge;
     }
@@ -198,7 +202,7 @@
                     </header>
                     <div class="card-content">
                         <p class="is-size-3">
-                            {randomChallenge}
+                            {`${randomChallenge} - ${randomReps}` }
                         </p>
                     </div>
                     <footer class="card-footer">
